@@ -1,12 +1,14 @@
 import discord
 from discord.ext import commands
 import os
-import asyncio
+
+TOKEN = os.getenv('DISCORD_TOKEN')
+COMMAND_PREFIX = os.getenv('COMMAND_PREFIX')
 
 # Set up bot with intents
 intents = discord.Intents.default()
 intents.message_content = True  # Required for message content access
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
 
 @bot.event
 async def on_ready():
@@ -23,18 +25,18 @@ async def on_message(message):
     await bot.process_commands(message)
 
 @bot.command(name='hello')
-async def hello(ctx):
+async def hello(context):
     """Say hello to the bot"""
-    await ctx.send(f'Hello {ctx.author.mention}!')
+    await context.send(f'Hello {context.author.mention}!')
 
 @bot.command(name='ping')
-async def ping(ctx):
+async def ping(context):
     """Check bot latency"""
     latency = round(bot.latency * 1000)
-    await ctx.send(f'Pong! Latency: {latency}ms')
+    await context.send(f'Pong! Latency: {latency}ms')
 
 @bot.command(name='info')
-async def info(ctx):
+async def info(context):
     """Get bot information"""
     embed = discord.Embed(
         title="Bot Information",
@@ -44,21 +46,18 @@ async def info(ctx):
     embed.add_field(name="Guilds", value=len(bot.guilds), inline=True)
     embed.add_field(name="Users", value=len(bot.users), inline=True)
     embed.add_field(name="Latency", value=f"{round(bot.latency * 1000)}ms", inline=True)
-    await ctx.send(embed=embed)
+    await context.send(embed=embed)
 
 # Error handling
 @bot.event
-async def on_command_error(ctx, error):
+async def on_command_error(context, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send("Command not found! Use `!help` to see available commands.")
+        await context.send("Command not found! Use `!help` to see available commands.")
     else:
         print(f"Error: {error}")
 
-# Get token from environment variable
-TOKEN = os.getenv('DISCORD_TOKEN')
-if not TOKEN:
-    print("Error: DISCORD_TOKEN environment variable not set!")
-    exit(1)
-
 if __name__ == "__main__":
+    if not TOKEN:
+        print("Error: DISCORD_TOKEN environment variable not set!")
+        exit(1)
     bot.run(TOKEN)
