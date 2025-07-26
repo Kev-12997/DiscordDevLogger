@@ -3,7 +3,7 @@ from discord.ext import commands
 
 class Events(commands.Cog):
     '''
-    Cog containing events to listen too.
+    Cog containing events to listen to.
     '''
     def __init__(self, bot):
         self.bot = bot

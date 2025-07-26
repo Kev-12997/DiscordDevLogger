@@ -13,15 +13,15 @@ bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
 
 async def load_extensions():
     '''
-    Loads all bot extensions.
+    Loads all bot extensions from the cogs folder.
     
     The "load_extension" function automatically looks for the "setup" function in each extension.
-    An extension is just a python file with a set of commands or events for the bot. The classes in theses extensions are called 
-    "cogs".
+    An extension is just a python file/module with a set of commands or events for the bot. 
+    The classes in theses extensions are called "cogs".
     '''
     try:
-        await bot.load_extension('events')
-        await bot.load_extension('commands')
+        await bot.load_extension('cogs.events')
+        await bot.load_extension('cogs.commands')
         print("All extensions loaded successfully!")
     except Exception as error:
         print(f"Failed to load extension: {error}")
