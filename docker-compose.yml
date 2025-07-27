@@ -5,6 +5,8 @@ services:
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - COMMAND_PREFIX=${COMMAND_PREFIX}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
     restart: unless-stopped
     # Optional: Add volume for persistent data
     # volumes:
