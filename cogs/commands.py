@@ -112,8 +112,19 @@ class Commands(commands.Cog):
                     value="Use this key in your applications to send logs that will appear in this Discord server!", 
                     inline=False
                 )
+            
+            try:
+                await context.author.send(embed=embed)
+                await context.send("📩 I've sent your API key to your DMs!")
+            except discord.Forbidden:
+                # If DMs are disabled, send in channel with warning
+                embed.add_field(
+                    name="⚠️ Warning", 
+                    value="Your DMs are disabled, so I'm showing your key here. Consider deleting this message after copying your key!", 
+                    inline=False
+                )
+                await context.send(embed=embed)
                 
-            await context.send(embed=embed)
             
         except Exception as e:
             error_embed = discord.Embed(
