@@ -9,6 +9,7 @@ COMMAND_PREFIX = os.getenv('COMMAND_PREFIX')
 # Set up bot with intents
 intents = discord.Intents.default()
 intents.message_content = True  # Required for message content access
+intents.members = True
 bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
 
 async def load_extensions():
@@ -22,7 +23,7 @@ async def load_extensions():
     try:
         await bot.load_extension('cogs.events')
         await bot.load_extension('cogs.commands')
-        await bot.load_extension('cogs.webhook')  # Use direct webhook alerts
+        await bot.load_extension('cogs.webhook')
         print("All extensions loaded successfully!")
     except Exception as error:
         print(f"Failed to load extension: {error}")

@@ -22,22 +22,24 @@ class DirectWebhookAlerts(commands.Cog):
         
         # Webhook server configuration
         self.webhook_port = int(os.getenv('WEBHOOK_PORT', 8080))
-        self.webhook_secret = os.getenv('WEBHOOK_SECRET', 'your-secure-webhook-secret-here')
         
-        # Initialize webhook server
+        # Initialize webhook server components (but don't start yet)
         self.app = web.Application()
         self.setup_routes()
         self.runner = None
         self.site = None
-        
-        # Start webhook server
-        self.bot.loop.create_task(self.start_webhook_server())
+        self._webhook_task = None
     
     def setup_routes(self):
         '''Setup webhook routes'''
         self.app.router.add_post('/webhook/log', self.handle_log_webhook)
         self.app.router.add_get('/webhook/health', self.health_check)
         self.app.router.add_get('/', self.root_handler)
+    
+    async def cog_load(self):
+        '''Called when the cog is loaded - start webhook server here'''
+        print("🚀 Starting webhook server...")
+        self._webhook_task = asyncio.create_task(self.start_webhook_server())
     
     async def root_handler(self, request):
         '''Root endpoint for basic info'''
@@ -156,10 +158,24 @@ class DirectWebhookAlerts(commands.Cog):
         except Exception as e:
             print(f"❌ Failed to start webhook server: {e}")
     
-    def cog_unload(self):
+    async def cog_unload(self):
         '''Cleanup when cog is unloaded'''
+        print("🛑 Stopping webhook server...")
+        
+        # Cancel the webhook task
+        if self._webhook_task and not self._webhook_task.done():
+            self._webhook_task.cancel()
+            try:
+                await self._webhook_task
+            except asyncio.CancelledError:
+                pass
+        
+        # Clean up the web server
+        if self.site:
+            await self.site.stop()
         if self.runner:
-            asyncio.create_task(self.runner.cleanup())
+            await self.runner.cleanup()
+        
         print("🛑 Webhook server stopped")
     
     async def process_alert_immediately(self, alert_data):

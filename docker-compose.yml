@@ -2,6 +2,8 @@ services:
   discord-bot:
     build: .
     container_name: discord-bot
+    ports:
+      - "8080:8080"
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - COMMAND_PREFIX=${COMMAND_PREFIX}
