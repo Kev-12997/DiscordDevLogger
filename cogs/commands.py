@@ -15,21 +15,6 @@ class Commands(commands.Cog):
             print(f"❌ Failed to initialize database: {e}")
             self.db = None
 
-    @commands.command(name='hello')
-    async def hello(self, context):
-        '''
-        Says hello to whoever called the 'hello' command.
-        '''
-        await context.send(f'Hello {context.author.mention}!')
-
-    @commands.command(name='ping')
-    async def ping(self, context):
-        '''
-        Check bot latency
-        '''
-        latency = round(self.bot.latency * 1000)
-        await context.send(f'Pong! Latency: {latency}ms')
-
     @commands.command(name='info')
     async def info(self, context):
         '''

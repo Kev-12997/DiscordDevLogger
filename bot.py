@@ -22,6 +22,7 @@ async def load_extensions():
     try:
         await bot.load_extension('cogs.events')
         await bot.load_extension('cogs.commands')
+        await bot.load_extension('cogs.webhook')  # Use direct webhook alerts
         print("All extensions loaded successfully!")
     except Exception as error:
         print(f"Failed to load extension: {error}")

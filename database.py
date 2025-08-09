@@ -108,3 +108,24 @@ class Database:
         except Exception as e:
             print(f'Database error deactivating user: {e}')
             return False
+
+    async def get_user_by_api_key(self, api_key: str) -> Optional[Dict[str, Any]]:
+        '''
+        Get user data by API key.
+        
+        Args:
+            api_key: The user's API key
+            
+        Returns:
+            User data dict or None if not found
+        '''
+        try:
+            response = self.supabase.table('users').select('*').eq('api_key', api_key).eq('is_active', True).execute()
+            
+            if response.data:
+                return response.data[0]
+            return None
+            
+        except Exception as e:
+            print(f'Database error getting user by API key: {e}')
+            return None
